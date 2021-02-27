@@ -11,6 +11,8 @@ const App = () => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [successMessage, setSuccessMessage] = useState(null)
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedUser')
@@ -34,8 +36,14 @@ const App = () => {
       blogService.setToken(user.token)
       setUsername('')
       setPassword('')
+
+      setSuccessMessage("Login success")
+      setTimeout(() => {setSuccessMessage(null)}, 5000)
     } catch (exception) {
-      console.log('Login error')
+      if (exception.response) {
+        setErrorMessage(exception.response.data.error)
+        setTimeout(() => {setErrorMessage(null)}, 5000)
+      }
     }
   }
 
@@ -47,8 +55,14 @@ const App = () => {
       setTitle('')
       setAuthor('')
       setUrl('')
+
+      setSuccessMessage(`a new blog ${response.title} by ${response.author} added`)
+      setTimeout(() => {setSuccessMessage(null)}, 5000)
     } catch (exception) {
-      console.log('Blog creation error')
+      if (exception.response) {
+        setErrorMessage(exception.response.data.error)
+        setTimeout(() => {setErrorMessage(null)}, 5000)
+      }
     }
   }
 
@@ -58,10 +72,24 @@ const App = () => {
     blogService.setToken(null)
   }
 
+  const Notification = (message, styleName) => {
+    if (message === null) {
+      return null
+    }
+
+    return (
+      <div className={styleName}>
+        {message}
+      </div>
+    )
+  }
+
 
   if (user === null) return (
     <div>
       <h2>Log in to application</h2>
+      {Notification(errorMessage, "error")}
+      {Notification(successMessage, "success")}
       <form onSubmit={handleLogin}>
         <div>
           username <input type="text" value={username} name="Username" onChange={({ target }) => setUsername(target.value)} />
@@ -77,6 +105,8 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
+      {Notification(errorMessage, "error")}
+      {Notification(successMessage, "success")}
       <p>{user.name} logged in <button onClick={() => logout()}>Logout</button></p>
 
       <h2>create new</h2>
