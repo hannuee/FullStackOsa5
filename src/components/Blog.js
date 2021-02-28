@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-const Blog = ({blog, handleUpdate}) => {
+const Blog = ({blog, handleUpdate, handleDeletion, loggedUser}) => {
   const [visible, setVisible] = useState(false)
 
   const hideWhenVisible = { display: visible ? 'none' : '' }
@@ -12,13 +12,18 @@ const Blog = ({blog, handleUpdate}) => {
 
   const handleLike = async (event) => {
     event.preventDefault()
-    await handleUpdate(blog.id, {
+    await handleUpdate(blog, {
       user: blog.user.id,
       likes: blog.likes + 1,
       author: blog.author,
       title: blog.title,
       url: blog.url
     })
+  }
+
+  const handleRemove = async (event) => {
+    event.preventDefault()
+    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) await handleDeletion(blog)
   }
 
   const blogStyle = {
@@ -28,7 +33,11 @@ const Blog = ({blog, handleUpdate}) => {
     borderWidth: 1,
     marginBottom: 5
   }
-    
+
+  const removeButton = () => {
+    if (blog.user.username === loggedUser.username) return <button onClick={handleRemove}>remove</button>
+  }
+
   return (
     <div style={blogStyle}>
       <div style={hideWhenVisible}>
@@ -38,7 +47,8 @@ const Blog = ({blog, handleUpdate}) => {
         {blog.title} <button onClick={toggleVisibility}>hide</button><br />
         {blog.url}<br />
         likes {blog.likes} <button onClick={handleLike}>like</button><br />
-        {blog.author}
+        {blog.author}<br />
+        {removeButton()}
       </div>
     </div>
   )

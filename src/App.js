@@ -67,12 +67,30 @@ const App = () => {
     }
   }
 
-  const handleUpdate = async (id, updatedBlog) => {
+  const handleUpdate = async (originalBlog, updatedBlog) => {
     try {
-      const response = await blogService.update(id, updatedBlog)
+      const response = await blogService.update(originalBlog.id, updatedBlog)
+      response.user = originalBlog.user
       setBlogs(blogs.filter(blog => blog.id !== response.id).concat(response).sort((a, b) => b.likes - a.likes))
 
       setSuccessMessage(`blog ${response.title} by ${response.author} got 1 like more`)
+      setTimeout(() => {setSuccessMessage(null)}, 5000)
+      return true
+    } catch (exception) {
+      if (exception.response) {
+        setErrorMessage(exception.response.data.error)
+        setTimeout(() => {setErrorMessage(null)}, 5000)
+      }
+      return false
+    }
+  }
+
+  const handleDeletion = async (deletedBlog) => {
+    try {
+      await blogService.deletion(deletedBlog.id)
+      setBlogs(blogs.filter(blog => blog.id !== deletedBlog.id).sort((a, b) => b.likes - a.likes))
+
+      setSuccessMessage(`blog ${deletedBlog.title} by ${deletedBlog.author} deleted`)
       setTimeout(() => {setSuccessMessage(null)}, 5000)
       return true
     } catch (exception) {
@@ -133,7 +151,7 @@ const App = () => {
       </Togglable>
 
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} handleUpdate={handleUpdate} />
+        <Blog key={blog.id} blog={blog} handleUpdate={handleUpdate} handleDeletion={handleDeletion} loggedUser={user} />
       )}
     </div>
   )
