@@ -67,6 +67,23 @@ const App = () => {
     }
   }
 
+  const handleUpdate = async (id, updatedBlog) => {
+    try {
+      const response = await blogService.update(id, updatedBlog)
+      setBlogs(blogs.filter(blog => blog.id !== response.id).concat(response))
+
+      setSuccessMessage(`blog ${response.title} by ${response.author} got 1 like more`)
+      setTimeout(() => {setSuccessMessage(null)}, 5000)
+      return true
+    } catch (exception) {
+      if (exception.response) {
+        setErrorMessage(exception.response.data.error)
+        setTimeout(() => {setErrorMessage(null)}, 5000)
+      }
+      return false
+    }
+  }
+
   const logout = (event) => {
     window.localStorage.removeItem('loggedUser')
     setUser(null)
@@ -116,7 +133,7 @@ const App = () => {
       </Togglable>
 
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} handleUpdate={handleUpdate} />
       )}
     </div>
   )
