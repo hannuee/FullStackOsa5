@@ -23,20 +23,20 @@ const App = () => {
 
     blogService.getAll().then(blogs =>
       setBlogs(blogs.sort((a, b) => b.likes - a.likes))
-    )  
+    )
   }, [])
 
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
-      const user = await loginService.login({username, password,})
+      const user = await loginService.login({ username, password, })
       window.localStorage.setItem('loggedUser', JSON.stringify(user))
       setUser(user)
       blogService.setToken(user.token)
       setUsername('')
       setPassword('')
 
-      setSuccessMessage("Login success")
+      setSuccessMessage('Login success')
       setTimeout(() => {setSuccessMessage(null)}, 5000)
     } catch (exception) {
       if (exception.response) {
@@ -102,7 +102,7 @@ const App = () => {
     }
   }
 
-  const logout = (event) => {
+  const logout = () => {
     window.localStorage.removeItem('loggedUser')
     setUser(null)
     blogService.setToken(null)
@@ -123,8 +123,8 @@ const App = () => {
   if (user === null) return (
     <div>
       <h2>Log in to application</h2>
-      {Notification(errorMessage, "error")}
-      {Notification(successMessage, "success")}
+      {Notification(errorMessage, 'error')}
+      {Notification(successMessage, 'success')}
       <form onSubmit={handleLogin}>
         <div>
           username <input type="text" value={username} name="Username" onChange={({ target }) => setUsername(target.value)} />
@@ -140,8 +140,8 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
-      {Notification(errorMessage, "error")}
-      {Notification(successMessage, "success")}
+      {Notification(errorMessage, 'error')}
+      {Notification(successMessage, 'success')}
       <p>{user.name} logged in <button onClick={() => logout()}>Logout</button></p>
 
       <Togglable buttonLabel="new blog" ref={blogFormRef}>
