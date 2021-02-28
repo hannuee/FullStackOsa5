@@ -22,7 +22,7 @@ const App = () => {
     }
 
     blogService.getAll().then(blogs =>
-      setBlogs(blogs)
+      setBlogs(blogs.sort((a, b) => b.likes - a.likes))
     )  
   }, [])
 
@@ -51,7 +51,7 @@ const App = () => {
   const handleCreation = async (blogObject) => {
     try {
       const response = await blogService.create(blogObject)
-      setBlogs(blogs.concat(response))
+      setBlogs(blogs.concat(response).sort((a, b) => b.likes - a.likes))
 
       blogFormRef.current.toggleVisibility()
 
@@ -70,7 +70,7 @@ const App = () => {
   const handleUpdate = async (id, updatedBlog) => {
     try {
       const response = await blogService.update(id, updatedBlog)
-      setBlogs(blogs.filter(blog => blog.id !== response.id).concat(response))
+      setBlogs(blogs.filter(blog => blog.id !== response.id).concat(response).sort((a, b) => b.likes - a.likes))
 
       setSuccessMessage(`blog ${response.title} by ${response.author} got 1 like more`)
       setTimeout(() => {setSuccessMessage(null)}, 5000)
