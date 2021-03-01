@@ -62,6 +62,7 @@ describe('Blog app', function() {
         })
 
         it('A blog can be liked', function() {
+            // Add a blog with a lazy method:
             cy.contains('new blog').click()
             cy.get('#title').type('Pressan blogi')
             cy.get('#author').type('Sale')
@@ -72,6 +73,21 @@ describe('Blog app', function() {
             cy.contains('like').click()
 
             cy.contains('likes 1')
+        })
+
+        it('A blog can be removed', function() {
+            // Add a blog with a lazy method:
+            cy.contains('new blog').click()
+            cy.get('#title').type('Pressan blogi')
+            cy.get('#author').type('Sale')
+            cy.get('#url').type('pressa.fi')
+            cy.get('#create').click()
+
+            cy.contains('view').click()
+            cy.contains('remove').click()
+
+            cy.wait(6000)
+            cy.contains('Pressan blogi').should('not.exist')
         })
       })
 })
