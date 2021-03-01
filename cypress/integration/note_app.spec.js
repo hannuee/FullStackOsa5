@@ -60,5 +60,18 @@ describe('Blog app', function() {
             cy.contains('a new blog Pressan blogi by Sale added')
             cy.contains('Pressan blogi Sale')
         })
+
+        it('A blog can be liked', function() {
+            cy.contains('new blog').click()
+            cy.get('#title').type('Pressan blogi')
+            cy.get('#author').type('Sale')
+            cy.get('#url').type('pressa.fi')
+            cy.get('#create').click()
+
+            cy.contains('view').click()
+            cy.contains('like').click()
+
+            cy.contains('likes 1')
+        })
       })
 })
