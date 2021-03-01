@@ -61,4 +61,20 @@ describe('<Blog />', () => {
         expect(fullDiv).toHaveTextContent('likes 10')
     })
 
+    test('when like-button is pushed twice, the proper event handler is called twice', () => {
+    
+        const mockHandleUpdate = jest.fn()
+        const mockHandleDeletion = jest.fn()
+        
+        const component = render(
+            <Blog blog={blog} handleUpdate={mockHandleUpdate} handleDeletion={mockHandleDeletion} loggedUser={user} />
+        )
+        
+        fireEvent.click(component.getByText('view'))
+        fireEvent.click(component.getByText('like'))
+        fireEvent.click(component.getByText('like'))
+
+        expect(mockHandleUpdate.mock.calls).toHaveLength(2)
+    })
+
 })
