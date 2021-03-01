@@ -89,5 +89,38 @@ describe('Blog app', function() {
             cy.wait(6000)
             cy.contains('Pressan blogi').should('not.exist')
         })
+
+        it('Blogs are ordered according to likes', function() {
+            // Add a blog with a lazy method:
+            cy.contains('new blog').click()
+            cy.get('#title').type('Paaministerin blogi')
+            cy.get('#author').type('Sanna')
+            cy.get('#url').type('paaministeri.fi')
+            cy.get('#create').click()
+
+            // Add 2 likes for it:
+            cy.contains('view').click()
+            cy.contains('like').click()
+            cy.wait(6000)
+            cy.contains('like').click()
+
+            cy.wait(6000)
+
+            // Add another blog with a lazy method:
+            cy.contains('new blog').click()
+            cy.get('#title').type('Pressan blogi')
+            cy.get('#author').type('Sale')
+            cy.get('#url').type('pressa.fi')
+            cy.get('#create').click()
+
+            // Add 1 like for it:
+            cy.wait(3000)
+            cy.get('.limitedInfo:last').contains('view').click()
+            cy.get('.fullInfo:last').contains('like').click()
+            
+            // Check the ordering of the blogs:
+            cy.get('.fullInfo:first').contains('Paaministerin blogi')
+            cy.get('.fullInfo:last').contains('Pressan blogi')
+        })
       })
 })
