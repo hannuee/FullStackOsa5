@@ -38,5 +38,27 @@ describe('Blog app', function() {
             cy.get('#password').should('be.visible')
             cy.get('#login').contains('login').should('be.visible')
         })
+    })
+
+    describe('When logged in', function() {
+
+        beforeEach(function() {
+            cy.request('POST', 'http://localhost:3003/api/login', { username: 'SauNii', password: 'passu' })
+                .then(response => { 
+                    localStorage.setItem('loggedUser', JSON.stringify(response.body))
+                    cy.visit('http://localhost:3000')
+                })
+        })
+    
+        it('A blog can be created', function() {
+            cy.contains('new blog').click()
+            cy.get('#title').type('Pressan blogi')
+            cy.get('#author').type('Sale')
+            cy.get('#url').type('pressa.fi')
+            cy.get('#create').click()
+
+            cy.contains('a new blog Pressan blogi by Sale added')
+            cy.contains('Pressan blogi Sale')
+        })
       })
 })
